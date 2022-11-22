@@ -6,10 +6,10 @@ import java.awt.*;
 
 public class Item extends Entity {
 
-    //private static int dropspeed;
+    //private static int dropSpeed;
     //private static int duration;
     private int speed;
-    public static enum ItemType{
+    public enum ItemType{
 
         BulletSpeedItem,
 
@@ -25,19 +25,19 @@ public class Item extends Entity {
 
         EnemyShipSpeedItem
 
-    };
+    }
 
-    private ItemType itemtype;
+    private ItemType itemType;
 
-    private boolean isget;
+    private boolean isAcquired;
 
 
-    public Item(final int positionX, final int positionY, final int speed, final ItemType itemtype) {
+    public Item(final int positionX, final int positionY, final int speed, final ItemType itemType) {
             super(positionX, positionY, 3 * 2, 5 * 2, Color.ORANGE);
             this.setPositionX(positionX -this.getWidth()/2);
             this.speed = speed;
-            this.itemtype = itemtype;
-            this.isget = false;
+            this.itemType = itemType;
+            this.isAcquired = false;
         }
 
 
@@ -45,34 +45,25 @@ public class Item extends Entity {
 
 
     public void setSprite () {
-        if (!this.isget)
+        if (!this.isAcquired)
             this.spriteType = DrawManager.SpriteType.ItemDrop;
         else
             this.spriteType = DrawManager.SpriteType.ItemGet;
     }
 
 
-    public void isGet(boolean bool){
-        this.isget = bool;
+    public void setAcquired(boolean bool){
+        this.isAcquired = bool;
     }
 
 
-    public boolean getIsget(){
-        return this.isget;
+    public boolean getAcquired(){
+        return this.isAcquired;
     }
-
-
-    public void setIsget(boolean bool){
-        this.isget = bool;
-    }
-
-
-    public void drop(){}
 
 
     public ItemType getItemType(){
-        return this.itemtype;
+        return this.itemType;
     }
-
 
     }
