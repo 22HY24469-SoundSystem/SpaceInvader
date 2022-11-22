@@ -21,7 +21,6 @@ import entity.EnemyShip;
 import entity.EnemyShipFormation;
 import entity.Entity;
 import entity.Ship;
-import engine.DrawManager;
 import entity.Shield;
 import sound.*;
 
@@ -519,7 +518,7 @@ public class GameScreen extends Screen {
 			itempool.add(item);
 			item.setSprite();
 
-			if (item.getIsget() == false &&
+			if (item.getAcquired() == false &&
 					itempool.getItem().getItemType() == Item.ItemType.BulletSpeedItem) {
 
 				this.returnCode = 0;
@@ -530,7 +529,7 @@ public class GameScreen extends Screen {
 				this.ship.setBulletSpeed(2 * ship.getBulletSpeed());
 
 			}
-			else if (item.getIsget() == false &&
+			else if (item.getAcquired() == false &&
 					itempool.getItem().getItemType() == Item.ItemType.PointUpItem) {
 
 				this.returnCode = 1;
@@ -539,7 +538,7 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					enemyShip.setPointValue(2 * enemyShip.getPointValue());
 			}
-			else if (item.getIsget() == false &&
+			else if (item.getAcquired() == false &&
 					itempool.getItem().getItemType() == Item.ItemType.MachineGun) {
 
 				LOGGER.info("Obtained MachineGun");
@@ -549,7 +548,7 @@ public class GameScreen extends Screen {
 				this.ship.setShootingInterval(0.1 * this.ship.getShootingInterval());
 
 			}
-			else if (item.getIsget() == false &&
+			else if (item.getAcquired() == false &&
 					itempool.getItem().getItemType() == Item.ItemType.ShieldItem) {
 
 				this.returnCode = 2;
@@ -559,7 +558,7 @@ public class GameScreen extends Screen {
 				shield = new Shield(this.ship.getPositionX(), this.ship.getPositionY() - 3, this.ship);
 
 			}
-			else if (item.getIsget() == false &&
+			else if (item.getAcquired() == false &&
 					itempool.getItem().getItemType() == Item.ItemType.SpeedUpItem) {
 
 				this.returnCode = 3;
@@ -578,7 +577,7 @@ public class GameScreen extends Screen {
 //				this.enemyShipFormation.setMovementSpeed(5 * this.enemyShipFormation.getMovementSpeed());
 //
 //			}
-			else if (item.getIsget() == false &&
+			else if (item.getAcquired() == false &&
 					itempool.getItem().getItemType() == Item.ItemType.ExtraLifeItem) {
 
 				this.clearItem();
@@ -592,7 +591,7 @@ public class GameScreen extends Screen {
 					LOGGER.warning("생명 4개 초과");
 			}
 
-			item.isGet(true);
+			item.setAcquired(true);
 		}
 	}
 
