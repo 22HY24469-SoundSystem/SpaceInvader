@@ -5,6 +5,7 @@ import engine.ItemManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class EnemyShipGenerator {
 
@@ -18,25 +19,57 @@ public class EnemyShipGenerator {
         itemManager = new ItemManager();
     }
 
-    public int GenerateEnemyShip(final GameSettings gameSettings){
+    public void GenerateEnemyShip(final GameSettings gameSettings){
         int index = 0;
         while (index <= maxFormationCount) {
             if(index == maxFormationCount) {
-                return -1;
+                return ;
             }
             if (!isAlive(index)) break;
             index++;
         }
         EnemyShipFormation enemyShip = new EnemyShipFormation(gameSettings);
         itemManager.assignHasItem(enemyShip);
-        if(this.shipFormationList.isEmpty()) shipFormationList.add(enemyShip);
-        else shipFormationList.set(index, enemyShip);
-        return index;
+        System.out.println(index);
+        try{
+            shipFormationList.set(index, enemyShip);
+        }catch (IndexOutOfBoundsException e){
+            shipFormationList.add(enemyShip);
+        }
     }
 
-    private boolean isAlive(int index){
-        if(this.shipFormationList.isEmpty()) return false;
-        if(!this.shipFormationList.get(index).isEmpty()) return true;
-        return false;
+    public boolean isAlive(int index){
+        try{
+            return !shipFormationList.get(index).isEmpty();
+        }catch(IndexOutOfBoundsException e){
+            return false;
+        }
+    }
+
+    public void update(){
+        for (EnemyShipFormation formation:
+             shipFormationList) {
+            if(formation == null) continue;
+            if(formation.isEmpty()) continue;
+            formation.update();
+        }
+    }
+
+    public void shoot(final Set<Bullet> bullets){
+        for (EnemyShipFormation formation:
+                shipFormationList) {
+            if(formation == null) continue;
+            if(formation.isEmpty()) continue;
+            formation.shoot(bullets);
+        }
+    }
+
+    public void draw(){
+        for (EnemyShipFormation formation:
+                shipFormationList) {
+            if(formation == null) continue;
+            if(formation.isEmpty()) continue;
+            formation.draw();
+        }
     }
 }

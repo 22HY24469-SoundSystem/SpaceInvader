@@ -56,27 +56,25 @@ public class GameScreen extends Screen {
 	private GameSettings gameSettings;
 	/** Current difficulty level number. */
 	private int level;
-	/** Formation of enemy ships. */
-	private EnemyShipFormation enemyShipFormation;
 	/** Player's ship. */
 	private Ship ship;
 	/** Bonus enemy ship that appears sometimes. */
 	private EnemyShip enemyShipSpecial;
-	/** Dangerous enemy ship tahat appears sometimes. */
+	/** Dangerous enemy ship that appears sometimes. */
 	private EnemyShip enemyShipDangerous;
 	/** Minimum time between bonus ship appearances. */
 	private Cooldown enemyShipSpecialCooldown;
 	/** Minimum time between dangerous ship appearances. */
-	private Cooldown enemyShipdangerousCooldown;
+	private Cooldown enemyShipDangerousCooldown;
 	/** Time until bonus ship explosion disappears. */
 	private Cooldown enemyShipSpecialExplosionCooldown;
-	/** Time until bangerous ship explosion disappears. */
-	private Cooldown enemyShipdangerousExplosionCooldown;
+	/** Time until dangerous ship explosion disappears. */
+	private Cooldown enemyShipDangerousExplosionCooldown;
 	/** Time from finishing the level to screen change. */
 	private Cooldown screenFinishedCooldown;
 	/** */
 	private Cooldown itemInfoCooldown;
-	/** Set of all bullets fired by on screen ships. */
+	/** Set of all bullets fired by on-screen ships. */
 	private Set<Bullet> bullets;
 	/** Current score. */
 	private int score;
@@ -95,7 +93,6 @@ public class GameScreen extends Screen {
 
 	private ItemManager itemmanager;
 
-
 	private Item item;
 
 	private ItemPool itempool;
@@ -105,6 +102,12 @@ public class GameScreen extends Screen {
 	private Shield shield;
 
 	private int past_countdown=4;
+
+	private EnemyShipGenerator enemyShipGenerator;
+
+	private Cooldown enemyGenerateCooldown;
+
+	private static final int ENEMY_GENERATE_INTERVAL = 10000;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -131,9 +134,9 @@ public class GameScreen extends Screen {
 		this.bonusLife = bonusLife;
 		this.level = gameState.getLevel();
 		this.score = gameState.getScore();
-		this.lives = gameState.getLivesRemaining();
+		lives = gameState.getLivesRemaining();
 		if (this.bonusLife)
-			this.lives++;
+			lives++;
 		if(lives == 0){
 			SoundPlay.getInstance().stopBgm();
 		}
@@ -164,9 +167,6 @@ public class GameScreen extends Screen {
 		long delay = 5800L;
 		timer.schedule(task, delay);
 
-		enemyShipFormation = new EnemyShipFormation(this.gameSettings);
-		itemmanager.assignHasItem(enemyShipFormation);
-		enemyShipFormation.attach(this);
 		int playerShipShape = FileManager.getPlayerShipShape();
 		switch (playerShipShape) {
 			case 0:
@@ -186,21 +186,32 @@ public class GameScreen extends Screen {
 		this.enemyShipSpecialExplosionCooldown = Core
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		//add dangerous Ship
-		this.enemyShipdangerousCooldown = Core.getVariableCooldown(
+		this.enemyShipDangerousCooldown = Core.getVariableCooldown(
 				BONUS_SHIP_INTERVAL, BONUS_SHIP_VARIANCE);
-		this.enemyShipdangerousCooldown.reset();
-		this.enemyShipdangerousExplosionCooldown = Core
+		this.enemyShipDangerousCooldown.reset();
+		this.enemyShipDangerousExplosionCooldown = Core
 				.getCooldown(BONUS_SHIP_EXPLOSION);
 		///////////////////////////////////
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
-		this.bullets = new HashSet<Bullet>();
-		this.itemIterator = new HashSet<Item>();
+		this.bullets = new HashSet<>();
+		this.itemIterator = new HashSet<>();
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
 		this.inputDelay = Core.getCooldown(INPUT_DELAY);
 		this.inputDelay.reset();
 
 		this.itemInfoCooldown = Core.getCooldown(ITEM_DISPLAY_TIME);
+
+		enemyShipGenerator = new EnemyShipGenerator(3);
+		enemyShipGenerator.GenerateEnemyShip(gameSettings);
+		enemyGenerateCooldown = Core.getCooldown(ENEMY_GENERATE_INTERVAL);
+		for (int i = 0; i < 3; i++) {
+			if(enemyShipGenerator.isAlive(i)){
+				enemyShipGenerator.shipFormationList.get(i).attach(this);
+			}
+		}
+		enemyGenerateCooldown.reset();
+
 	}
 
 	/**
@@ -212,7 +223,7 @@ public class GameScreen extends Screen {
 		super.run();
 
 		SoundPlay.getInstance().stopBgm();
-		this.score += LIFE_SCORE * (this.lives - 1);
+		this.score += LIFE_SCORE * (lives - 1);
 		this.logger.info("Screen cleared with a score of " + this.score); // 정상 출력
 		return this.returnCode;
 	}
@@ -230,16 +241,13 @@ public class GameScreen extends Screen {
 			if (this.enemyShipSpecial != null) operateSpecialShip();
 			else generateSpecialShip();
 
-
-			/** add dangerousShip */
 			if (this.enemyShipDangerous != null) operateDangerousShip();
 			else generateDangerousShip();
 
-
+			generateEnemyShip();
 			this.ship.update();
-			this.enemyShipFormation.update();
-			this.enemyShipFormation.shoot(this.bullets);
-
+			enemyShipGenerator.update();
+			enemyShipGenerator.shoot(this.bullets);
 		}
 		for(Item item : this.itemIterator){
 			if(item != null) {
@@ -250,8 +258,7 @@ public class GameScreen extends Screen {
 		cleanItems();
 		cleanBullets();
 		draw();
-		if ((this.enemyShipFormation.isEmpty() || this.lives == 0)
-				&& !this.levelFinished) {
+		if ( lives == 0 && !this.levelFinished) {
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
 		}
@@ -259,10 +266,11 @@ public class GameScreen extends Screen {
 		if (this.levelFinished && this.screenFinishedCooldown.checkFinished())
 			this.isRunning = false;
 
-		if(this.enemyShipFormation.isEmpty()){
-			sound.SoundPlay.getInstance().play(SoundType.roundClear);
-			this.isRunning = false;
-		}
+		//수정 필요
+//		if(this.enemyShipFormation.isEmpty()){
+//			sound.SoundPlay.getInstance().play(SoundType.roundClear);
+//			this.isRunning = false;
+//		}
 	}
 
 	/**
@@ -297,7 +305,7 @@ public class GameScreen extends Screen {
 				drawManager.drawEntity(shield, shield.getPositionX(),
 				shield.getPositionY());}
 
-		enemyShipFormation.draw();
+		enemyShipGenerator.draw();
 
 		for (Bullet bullet : this.bullets)
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
@@ -306,7 +314,7 @@ public class GameScreen extends Screen {
 		// Interface.
 		drawManager.drawLevels(this, this.level);
 		drawManager.drawScore(this, this.score);
-		drawManager.drawLives(this, this.lives);
+		drawManager.drawLives(this, lives);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
 
 		// Countdown to game start.
@@ -339,10 +347,10 @@ public class GameScreen extends Screen {
 	}
 
 	/**
-	 * Cleans bullets that go off screen.
+	 * Cleans bullets that go off-screen.
 	 */
 	private void cleanBullets() {
-		Set<Bullet> recyclable = new HashSet<Bullet>();
+		Set<Bullet> recyclable = new HashSet<>();
 		for (Bullet bullet : this.bullets) {
 			bullet.update();
 			if (bullet.getPositionY() < SEPARATION_LINE_HEIGHT
@@ -357,7 +365,7 @@ public class GameScreen extends Screen {
 	 * Manages collisions between bullets and ships.
 	 */
 	private void manageCollisions() {
-		Set<Bullet> recyclable = new HashSet<Bullet>();
+		Set<Bullet> recyclable = new HashSet<>();
 		for (Bullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
@@ -367,8 +375,8 @@ public class GameScreen extends Screen {
 					if (shield == null && !this.ship.isDestroyed()) {
 						SoundPlay.getInstance().play(SoundType.hit);
 						this.ship.destroy();
-						this.lives--;
-						this.logger.info("Hit on player ship, " + this.lives
+						lives--;
+						this.logger.info("Hit on player ship, " + lives
 								+ " lives remaining.");
 							this.clearItem();
 
@@ -377,24 +385,27 @@ public class GameScreen extends Screen {
 					}
 				}
 			} else {
-				for (EnemyShip enemyShip : this.enemyShipFormation)
-					if (!enemyShip.isDestroyed()
-							&& checkCollision(bullet, enemyShip)) {
-						SoundPlay.getInstance().play(SoundType.enemyKill);
-						this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
+				for (EnemyShipFormation formation :
+						EnemyShipGenerator.shipFormationList) {
+					for (EnemyShip enemyShip : formation)
+						if (!enemyShip.isDestroyed()
+								&& checkCollision(bullet, enemyShip)) {
+							SoundPlay.getInstance().play(SoundType.enemyKill);
+							this.score += enemyShip.getPointValue();
+							this.shipsDestroyed++;
 
 
-						if(enemyShip.getItemType() != null) {
-						    enemyShip.itemDrop(itemIterator);
-							for(Item item : this.itemIterator)
-								if(item != null)
-								item.setSprite();
+							if(enemyShip.getItemType() != null) {
+								enemyShip.itemDrop(itemIterator);
+								for(Item item : this.itemIterator)
+									if(item != null) item.setSprite();
+							}
+
+							formation.destroy(enemyShip);
+							recyclable.add(bullet);
 						}
+				}
 
-						this.enemyShipFormation.destroy(enemyShip);
-						recyclable.add(bullet);
-					}
 				if (this.enemyShipSpecial != null
 						&& !this.enemyShipSpecial.isDestroyed()
 						&& checkCollision(bullet, this.enemyShipSpecial)) {
@@ -413,7 +424,7 @@ public class GameScreen extends Screen {
 					this.score += this.enemyShipDangerous.getPointValue();
 					this.shipsDestroyed++;
 					this.enemyShipDangerous.destroy();
-					this.enemyShipdangerousExplosionCooldown.reset();
+					this.enemyShipDangerousExplosionCooldown.reset();
 					recyclable.add(bullet);
 				}
 			}
@@ -452,7 +463,7 @@ public class GameScreen extends Screen {
 	 * @return Current game state.
 	 */
 	public final GameState getGameState() {
-		return new GameState(this.level, this.score, this.lives,
+		return new GameState(this.level, this.score, lives,
 				this.bulletsShot, this.shipsDestroyed);
 	}
 
@@ -463,7 +474,7 @@ public class GameScreen extends Screen {
 			itempool.add(item);
 			item.setSprite();
 
-			if (item.getAcquired() == false &&
+			if (!item.getAcquired() &&
 					itempool.getItem().getItemType() == Item.ItemType.BulletSpeedItem) {
 
 				this.returnCode = 0;
@@ -474,16 +485,20 @@ public class GameScreen extends Screen {
 				this.ship.setBulletSpeed(2 * ship.getBulletSpeed());
 
 			}
-			else if (item.getAcquired() == false &&
+			else if (!item.getAcquired() &&
 					itempool.getItem().getItemType() == Item.ItemType.PointUpItem) {
 
 				this.returnCode = 1;
 				this.clearItem();//효과 초기화
 				this.itemInfoCooldown.reset();
-				for (EnemyShip enemyShip : this.enemyShipFormation)
-					enemyShip.setPointValue(2 * enemyShip.getPointValue());
+				for (EnemyShipFormation formation :
+						EnemyShipGenerator.shipFormationList) {
+					for (EnemyShip enemyShip : formation)
+						enemyShip.setPointValue(2 * enemyShip.getPointValue());
+				}
+
 			}
-			else if (item.getAcquired() == false &&
+			else if (!item.getAcquired() &&
 					itempool.getItem().getItemType() == Item.ItemType.MachineGun) {
 
 				LOGGER.info("Obtained MachineGun");
@@ -493,7 +508,7 @@ public class GameScreen extends Screen {
 				this.ship.setShootingInterval(0.1 * this.ship.getShootingInterval());
 
 			}
-			else if (item.getAcquired() == false &&
+			else if (!item.getAcquired() &&
 					itempool.getItem().getItemType() == Item.ItemType.ShieldItem) {
 
 				this.returnCode = 2;
@@ -503,7 +518,7 @@ public class GameScreen extends Screen {
 				shield = new Shield(this.ship.getPositionX(), this.ship.getPositionY() - 3, this.ship);
 
 			}
-			else if (item.getAcquired() == false &&
+			else if (!item.getAcquired() &&
 					itempool.getItem().getItemType() == Item.ItemType.SpeedUpItem) {
 
 				this.returnCode = 3;
@@ -512,8 +527,8 @@ public class GameScreen extends Screen {
 				this.itemInfoCooldown.reset();
 				this.ship.setShipSpeed(2 * this.ship.getSpeed());
 			}
-//			else if (item.getIsget() == false &&
-//					itempool.getItem().getItemType() == Item.ItemType.EnemyShipSpeedItem) {
+//			else if (item.getIsGet() == false &&
+//					itemPool.getItem().getItemType() == Item.ItemType.EnemyShipSpeedItem) {
 //
 //				this.returnCode = 4;
 //				this.clearItem();//효과 초기화
@@ -522,13 +537,13 @@ public class GameScreen extends Screen {
 //				this.enemyShipFormation.setMovementSpeed(5 * this.enemyShipFormation.getMovementSpeed());
 //
 //			}
-			else if (item.getAcquired() == false &&
+			else if (!item.getAcquired() &&
 					itempool.getItem().getItemType() == Item.ItemType.ExtraLifeItem) {
 
 				this.clearItem();
 				this.clearPointUp();
-				if (this.lives < 4) {
-					this.lives++;
+				if (lives < 4) {
+					lives++;
 					this.returnCode = 5;
 					this.itemInfoCooldown.reset();
 				}
@@ -546,7 +561,7 @@ public class GameScreen extends Screen {
 	}
 
 	private void cleanItems() {
-		Set<Item> recyclable = new HashSet<Item>();
+		Set<Item> recyclable = new HashSet<>();
 		for (Item item : this.itemIterator) {
 			item.update();
 			if (item.getPositionY() < SEPARATION_LINE_HEIGHT
@@ -557,8 +572,11 @@ public class GameScreen extends Screen {
 	}
 
 	public void clearPointUp(){
-		for (EnemyShip enemyShip : this.enemyShipFormation)
-			enemyShip.setInitPointValue();
+		for (EnemyShipFormation formation :
+				EnemyShipGenerator.shipFormationList) {
+			for (EnemyShip enemyShip : formation)
+				enemyShip.setInitPointValue();
+		}
 	}
 
 	private void operateShip(){
@@ -587,6 +605,19 @@ public class GameScreen extends Screen {
 				this.bulletsShot++;
 	}
 
+	private void generateEnemyShip(){
+		if(enemyGenerateCooldown.checkFinished()){
+			enemyShipGenerator.GenerateEnemyShip(gameSettings);
+			for (int i = 0; i < 3; i++) {
+				if(enemyShipGenerator.isAlive(i)){
+					enemyShipGenerator.shipFormationList.get(i).attach(this);
+				}
+			}
+			enemyGenerateCooldown.reset();
+			this.logger.info("enemy ship appears");
+		}
+	}
+
 	private void operateSpecialShip(){
 		if(this.enemyShipSpecial.getPositionX() > this.width) {
 			this.enemyShipSpecial = null;
@@ -609,7 +640,7 @@ public class GameScreen extends Screen {
 
 	private void operateDangerousShip(){
 		if (this.enemyShipDangerous.getPositionX() > this.width) {
-			this.lives--;
+			lives--;
 			this.enemyShipDangerous = null;
 			this.logger.info("The dangerous ship has escaped and you have lost lives");
 		}else{
@@ -621,9 +652,9 @@ public class GameScreen extends Screen {
 	}
 
 	private void generateDangerousShip(){
-		if (this.enemyShipdangerousCooldown.checkFinished()) {
+		if (this.enemyShipDangerousCooldown.checkFinished()) {
 			this.enemyShipDangerous = new EnemyShip(Color.BLUE);
-			this.enemyShipdangerousCooldown.reset();
+			this.enemyShipDangerousCooldown.reset();
 			this.logger.info("A dangerous ship appears");
 		}
 	}

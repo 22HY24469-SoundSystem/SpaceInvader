@@ -1,11 +1,7 @@
 package entity;
 
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import screen.Screen;
@@ -167,6 +163,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	private int shipCount;
 
+	Random random = new Random();
 	/**
 	 * Directions the formation can move.
 	 */
@@ -203,7 +200,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				* SHOOTING_VARIANCE);
 		this.baseSpeed = gameSettings.getBaseSpeed();
 		this.movementSpeed = baseSpeed;
-		this.positionX = INIT_POS_X;
+		this.positionX = random.nextInt(448-SIDE_MARGIN*2-this.width)+SIDE_MARGIN;
 		this.positionY = INIT_POS_Y;
 		this.shooters = new ArrayList<EnemyShip>();
 		SpriteType spriteType;
@@ -303,7 +300,6 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		movementInterval++;
 		if (movementInterval >= this.movementSpeed) {
 			movementInterval = 0;
-
 			boolean isAtTop = positionY + this.height <= BOTTOM_MARGIN;
 			boolean isAtBottom = positionY
 					+ this.height > screen.getHeight() - BOTTOM_MARGIN;
