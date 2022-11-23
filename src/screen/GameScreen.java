@@ -107,7 +107,7 @@ public class GameScreen extends Screen {
 
 	private Cooldown enemyGenerateCooldown;
 
-	private static final int ENEMY_GENERATE_INTERVAL = 10000;
+	private static final int ENEMY_GENERATE_INTERVAL = 5000;
 
 	/**
 	 * Constructor, establishes the properties of the screen.
@@ -207,7 +207,7 @@ public class GameScreen extends Screen {
 		enemyGenerateCooldown = Core.getCooldown(ENEMY_GENERATE_INTERVAL);
 		for (int i = 0; i < 3; i++) {
 			if(enemyShipGenerator.isAlive(i)){
-				enemyShipGenerator.shipFormationList.get(i).attach(this);
+				EnemyShipGenerator.shipFormationList.get(i).attach(this);
 			}
 		}
 		enemyGenerateCooldown.reset();
@@ -271,6 +271,16 @@ public class GameScreen extends Screen {
 //			sound.SoundPlay.getInstance().play(SoundType.roundClear);
 //			this.isRunning = false;
 //		}
+
+
+		// destroy EnemyShip when escape the screen
+		for (EnemyShipFormation formation :
+				EnemyShipGenerator.shipFormationList) {
+			for (EnemyShip ship : formation) {
+				if (ship.isDestroyed()) continue;
+				if (!isEnemyInScreen(ship)) formation.destroy(ship);
+			}
+		}
 	}
 
 	/**
@@ -610,7 +620,7 @@ public class GameScreen extends Screen {
 			enemyShipGenerator.GenerateEnemyShip(gameSettings);
 			for (int i = 0; i < 3; i++) {
 				if(enemyShipGenerator.isAlive(i)){
-					enemyShipGenerator.shipFormationList.get(i).attach(this);
+					EnemyShipGenerator.shipFormationList.get(i).attach(this);
 				}
 			}
 			enemyGenerateCooldown.reset();
@@ -657,6 +667,12 @@ public class GameScreen extends Screen {
 			this.enemyShipDangerousCooldown.reset();
 			this.logger.info("A dangerous ship appears");
 		}
+	}
+
+	private boolean isEnemyInScreen(EnemyShip enemyShip){
+		if(enemyShip.getPositionY() > this.height) return false;
+		return enemyShip.getPositionX() >= 0
+				&& enemyShip.getPositionX() <= this.width;
 	}
 
 }

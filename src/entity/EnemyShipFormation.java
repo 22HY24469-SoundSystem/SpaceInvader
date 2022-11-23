@@ -61,7 +61,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	private static final int SIDE_MARGIN = 20;
 	/**
-	 * Margin on the bottom of the screen.
+	 * Margin at the bottom of the screen.
 	 */
 	private static final int BOTTOM_MARGIN = 80;
 	/**
@@ -180,7 +180,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		DOWN,
 
 		UP
-	};
+	}
 
 	/**
 	 * Constructor, sets the initial conditions.
@@ -190,7 +190,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	public EnemyShipFormation(final GameSettings gameSettings) {
 		this.drawManager = Core.getDrawManager();
 		this.logger = Core.getLogger();
-		this.enemyShips = new ArrayList<List<EnemyShip>>();
+		this.enemyShips = new ArrayList<>();
 		this.currentDirection = Direction.RIGHT;
 		this.movementInterval = 0;
 		this.nShipsWide = gameSettings.getFormationWidth();
@@ -202,7 +202,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		this.movementSpeed = baseSpeed;
 		this.positionX = random.nextInt(448-SIDE_MARGIN*2-this.width)+SIDE_MARGIN;
 		this.positionY = INIT_POS_Y;
-		this.shooters = new ArrayList<EnemyShip>();
+		this.shooters = new ArrayList<>();
 		SpriteType spriteType;
 
 		this.logger.info("Initializing " + nShipsWide + "x" + nShipsHigh
@@ -210,7 +210,7 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 
 		// Each sub-list is a column on the formation.
 		for (int i = 0; i < this.nShipsWide; i++)
-			this.enemyShips.add(new ArrayList<EnemyShip>());
+			this.enemyShips.add(new ArrayList<>());
 
 		for (List<EnemyShip> column : this.enemyShips) {
 			Current_Level = gameSettings.getLevel();
@@ -288,74 +288,74 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 		}
 
 		cleanUp();
-		int inverse = 0;
+//		int inverse = 0;
 		int movementX = 0;
-		int movementY = 0;
+		int movementY = 1;
 		double remainingProportion = (double) this.shipCount
 				/ (this.nShipsHigh * this.nShipsWide);
-		this.movementSpeed = (double) (Math.pow(remainingProportion, 2)
-				* this.baseSpeed);
+		this.movementSpeed = Math.pow(remainingProportion, 2)
+				* this.baseSpeed;
 		this.movementSpeed += MINIMUM_SPEED;
 
-		movementInterval++;
-		if (movementInterval >= this.movementSpeed) {
-			movementInterval = 0;
-			boolean isAtTop = positionY + this.height <= BOTTOM_MARGIN;
-			boolean isAtBottom = positionY
-					+ this.height > screen.getHeight() - BOTTOM_MARGIN;
-			boolean isAtRightSide = positionX
-					+ this.width >= screen.getWidth() - SIDE_MARGIN;
-			boolean isAtLeftSide = positionX <= SIDE_MARGIN;
-			boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
-
-			if (currentDirection == Direction.DOWN) {
-				if (isAtHorizontalAltitude)
-					if (previousDirection == Direction.RIGHT) {
-						currentDirection = Direction.LEFT;
-						this.logger.info("Formation now moving left 1");
-					} else {
-						currentDirection = Direction.RIGHT;
-						this.logger.info("Formation now moving right 2");
-					}
-			} else if (currentDirection == Direction.LEFT) {
-				if (isAtLeftSide)
-					if (!isAtBottom && Current_Level != 8) {
-						previousDirection = currentDirection;
-						currentDirection = Direction.DOWN;
-						this.logger.info("Formation now moving down 3");
-					} else {
-
-						currentDirection = Direction.RIGHT;
-						this.logger.info("Formation now moving right 4");
-					}
-			} else {
-				if (isAtRightSide)
-					if (!isAtBottom && Current_Level != 8) {
-						previousDirection = currentDirection;
-						currentDirection = Direction.DOWN;
-						this.logger.info("Formation now moving down 5");
-					} else {
-						currentDirection = Direction.LEFT;
-						this.logger.info("Formation now moving left 6");
-					}
-			}
-
-			if (currentDirection == Direction.RIGHT)
-				movementX = X_SPEED;
-			else if (currentDirection == Direction.LEFT)
-				movementX = -X_SPEED;
-			else if (currentDirection == Direction.UP)
-				movementY =-Y_SPEED;
-			else
-				movementY = Y_SPEED;
-
-			positionX += movementX;
-			positionY += movementY;
+//		movementInterval++;
+//		if (movementInterval >= this.movementSpeed) {
+//			movementInterval = 0;
+//			boolean isAtTop = positionY + this.height <= BOTTOM_MARGIN;
+//			boolean isAtBottom = positionY
+//					+ this.height > screen.getHeight() - BOTTOM_MARGIN;
+//			boolean isAtRightSide = positionX
+//					+ this.width >= screen.getWidth() - SIDE_MARGIN;
+//			boolean isAtLeftSide = positionX <= SIDE_MARGIN;
+//			boolean isAtHorizontalAltitude = positionY % DESCENT_DISTANCE == 0;
+//
+//			if (currentDirection == Direction.DOWN) {
+//				if (isAtHorizontalAltitude)
+//					if (previousDirection == Direction.RIGHT) {
+//						currentDirection = Direction.LEFT;
+//						this.logger.info("Formation now moving left 1");
+//					} else {
+//						currentDirection = Direction.RIGHT;
+//						this.logger.info("Formation now moving right 2");
+//					}
+//			} else if (currentDirection == Direction.LEFT) {
+//				if (isAtLeftSide)
+//					if (!isAtBottom && Current_Level != 8) {
+//						previousDirection = currentDirection;
+//						currentDirection = Direction.DOWN;
+//						this.logger.info("Formation now moving down 3");
+//					} else {
+//
+//						currentDirection = Direction.RIGHT;
+//						this.logger.info("Formation now moving right 4");
+//					}
+//			} else {
+//				if (isAtRightSide)
+//					if (!isAtBottom && Current_Level != 8) {
+//						previousDirection = currentDirection;
+//						currentDirection = Direction.DOWN;
+//						this.logger.info("Formation now moving down 5");
+//					} else {
+//						currentDirection = Direction.LEFT;
+//						this.logger.info("Formation now moving left 6");
+//					}
+//			}
+//
+//			if (currentDirection == Direction.RIGHT)
+//				movementX = X_SPEED;
+//			else if (currentDirection == Direction.LEFT)
+//				movementX = -X_SPEED;
+//			else if (currentDirection == Direction.UP)
+//				movementY =-Y_SPEED;
+//			else
+//				movementY = Y_SPEED;
+//
+//			positionX += movementX;
+//			positionY += movementY;
 
 			// Cleans explosions.
 			List<EnemyShip> destroyed;
 			for (List<EnemyShip> column : this.enemyShips) {
-				destroyed = new ArrayList<EnemyShip>();
+				destroyed = new ArrayList<>();
 				for (EnemyShip ship : column) {
 					if (ship != null && ship.isDestroyed()) {
 						destroyed.add(ship);
@@ -371,35 +371,35 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 				for (EnemyShip enemyShip : column) {
 					if(Current_Level == 8) {
 
-						if(isAtBottom) {
-							inverse = 1;
-							this.logger.info("Inverse:" + inverse);
-						}
-						else if (isAtTop) {
-							inverse = 0;
-							this.logger.info("Inverse:" + inverse);
-						}
-						if(inverse == 0) {
-							movementY = (int) Math.random() * 3 + 1;
-							this.logger.info("moveY:" + movementY + " > current:" + positionY);
-						}
-						else if(inverse == 1) {
-							movementY = ((int) Math.random() * 3 + 1) * (-1);
-							this.logger.info("moveY:" + movementY + " > current:" + positionY);
-						}
+//						if(isAtBottom) {
+//							inverse = 1;
+//							this.logger.info("Inverse:" + inverse);
+//						}
+//						else if (isAtTop) {
+//							inverse = 0;
+//							this.logger.info("Inverse:" + inverse);
+//						}
+//						if(inverse == 0) {
+//							movementY = (int) Math.random() * 3 + 1;
+//							this.logger.info("moveY:" + movementY + " > current:" + positionY);
+//						}
+//						else if(inverse == 1) {
+//							movementY = ((int) Math.random() * 3 + 1) * (-1);
+//							this.logger.info("moveY:" + movementY + " > current:" + positionY);
+//						}
 
 					}
 					enemyShip.move(movementX, movementY);
 					enemyShip.update();
 				}
 		}
-	}
+//	}
 
 	/**
 	 * Cleans empty columns, adjusts the width and height of the formation.
 	 */
 	private void cleanUp() {
-		Set<Integer> emptyColumns = new HashSet<Integer>();
+		Set<Integer> emptyColumns = new HashSet<>();
 		int maxColumn = 0;
 		int minPositionY = Integer.MAX_VALUE;
 		for (List<EnemyShip> column : this.enemyShips) {
@@ -519,11 +519,10 @@ public class EnemyShipFormation implements Iterable<EnemyShip> {
 	 */
 	@Override
 	public final Iterator<EnemyShip> iterator() {
-		Set<EnemyShip> enemyShipsList = new HashSet<EnemyShip>();
+		Set<EnemyShip> enemyShipsList = new HashSet<>();
 
 		for (List<EnemyShip> column : this.enemyShips)
-			for (EnemyShip enemyShip : column)
-				enemyShipsList.add(enemyShip);
+			enemyShipsList.addAll(column);
 
 		return enemyShipsList.iterator();
 	}
