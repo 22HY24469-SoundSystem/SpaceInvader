@@ -546,6 +546,7 @@ if ( lives == 0 && !this.levelFinished) {
 						LOGGER.warning("생명 4개 초과");
 				}
 			}
+
 			item.setAcquired(true);
 		}
 	}
@@ -659,4 +660,72 @@ if ( lives == 0 && !this.levelFinished) {
 		return enemyShip.getPositionX() >= 0
 				&& enemyShip.getPositionX() <= this.width;
 	}
+
+	private void operateShip(){
+		boolean moveRight = inputManager.isKeyDown(KeyEvent.VK_RIGHT)
+				|| inputManager.isKeyDown(KeyEvent.VK_D);
+		boolean moveLeft = inputManager.isKeyDown(KeyEvent.VK_LEFT)
+				|| inputManager.isKeyDown(KeyEvent.VK_A);
+
+		boolean isRightBorder = this.ship.getPositionX()
+				+ this.ship.getWidth() + this.ship.getSpeed() > this.width - 1;
+		boolean isLeftBorder = this.ship.getPositionX()
+				- this.ship.getSpeed() < 1;
+
+		if (moveRight && !isRightBorder) {
+			this.ship.moveRight();
+			if(shield != null)
+				shield.moveRight();
+		}
+		if (moveLeft && !isLeftBorder) {
+			this.ship.moveLeft();
+			if(shield != null)
+				shield.moveLeft();
+		}
+		if (inputManager.isKeyDown(KeyEvent.VK_SPACE))
+			if (this.ship.shoot(this.bullets))
+				this.bulletsShot++;
+	}
+
+	private void operateSpecialShip(){
+		if(this.enemyShipSpecial.getPositionX() > this.width) {
+			this.enemyShipSpecial = null;
+			this.logger.info("The special ship has escaped");
+		}else{
+			if (!this.enemyShipSpecial.isDestroyed())
+				this.enemyShipSpecial.move(2, 0);
+			else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
+				this.enemyShipSpecial = null;
+		}
+	}
+
+	private void generateSpecialShip(){
+		if(this.enemyShipSpecialCooldown.checkFinished()){
+			this.enemyShipSpecial = new EnemyShip();
+			this.enemyShipSpecialCooldown.reset();
+			this.logger.info("A special ship appears");
+		}
+	}
+
+	private void operateDangerousShip(){
+		if (this.enemyShipDangerous.getPositionX() > this.width) {
+			this.lives--;
+			this.enemyShipDangerous = null;
+			this.logger.info("The dangerous ship has escaped and you have lost lives");
+		}else{
+			if (!this.enemyShipDangerous.isDestroyed())
+				this.enemyShipDangerous.move(1, 0);
+			else if (this.enemyShipSpecialExplosionCooldown.checkFinished())
+				this.enemyShipDangerous = null;
+		}
+	}
+
+	private void generateDangerousShip(){
+		if (this.enemyShipdangerousCooldown.checkFinished()) {
+			this.enemyShipDangerous = new EnemyShip(Color.BLUE);
+			this.enemyShipdangerousCooldown.reset();
+			this.logger.info("A dangerous ship appears");
+		}
+	}
+
 }
