@@ -258,7 +258,7 @@ public class GameScreen extends Screen {
 		cleanItems();
 		cleanBullets();
 		draw();
-		if ( lives == 0 && !this.levelFinished) {
+if ( lives == 0 && !this.levelFinished) {
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
 		}
@@ -398,7 +398,6 @@ public class GameScreen extends Screen {
 				collideEnemyShip(bullet,recyclable);
 				collideDangerousSpecialShip(enemyShipSpecial, bullet, recyclable);
 				collideDangerousSpecialShip(enemyShipDangerous, bullet, recyclable);
-
 			}
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
@@ -485,12 +484,10 @@ public class GameScreen extends Screen {
 
 			if (!item.getAcquired()) {
 				if (itemPool.getItem().getItemType() == Item.ItemType.BulletSpeedItem) {
-
 					this.returnCode = 0;
 					this.clearItem();//효과초기화
 					this.clearPointUp();
 					this.itemInfoCooldown.reset();
-
 					this.ship.setBulletSpeed(2 * ship.getBulletSpeed());
 
 				} else if (itemPool.getItem().getItemType() == Item.ItemType.PointUpItem) {
@@ -531,15 +528,14 @@ public class GameScreen extends Screen {
 //			else if (item.getIsGet() == false &&
 //					itemPool.getItem().getItemType() == Item.ItemType.EnemyShipSpeedItem) {
 //
-//				this.returnCode = 4;
-//				this.clearItem();//효과 초기화
-//				this.clearPointUp();
-//				this.itemInfoCooldown.reset();
-//				this.enemyShipFormation.setMovementSpeed(5 * this.enemyShipFormation.getMovementSpeed());
+//					this.returnCode = 4;
+//					this.clearItem();//효과 초기화
+//					this.clearPointUp();
+//					this.itemInfoCooldown.reset();
+//					this.enemyShipFormation.setMovementSpeed(5 * this.enemyShipFormation.getMovementSpeed());
 //
 //			}
 				else if (itemPool.getItem().getItemType() == Item.ItemType.ExtraLifeItem) {
-
 					this.clearItem();
 					this.clearPointUp();
 					if (lives < 4) {
@@ -663,5 +659,4 @@ public class GameScreen extends Screen {
 		return enemyShip.getPositionX() >= 0
 				&& enemyShip.getPositionX() <= this.width;
 	}
-
 }
