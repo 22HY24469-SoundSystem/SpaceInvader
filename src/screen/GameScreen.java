@@ -436,19 +436,22 @@ public class GameScreen extends Screen {
 				for (EnemyShip enemyShip : this.enemyShipFormation)
 					if (!enemyShip.isDestroyed()
 							&& checkCollision(bullet, enemyShip)) {
-						SoundPlay.getInstance().play(SoundType.enemyKill);
-						this.score += enemyShip.getPointValue();
-						this.shipsDestroyed++;
+						enemyShip.decreaseHP();
+						if (enemyShip.isDestroyed()) {
+							SoundPlay.getInstance().play(SoundType.enemyKill);
+							this.score += enemyShip.getPointValue();
+							this.shipsDestroyed++;
 
 
-						if(enemyShip.getItemType() != null) {
-						    enemyShip.itemDrop(itemiterator);
-							for(Item item : this.itemiterator)
-								if(item != null)
-								item.setSprite();
+							if(enemyShip.getItemType() != null) {
+							    enemyShip.itemDrop(itemiterator);
+								for(Item item : this.itemiterator)
+									if(item != null)
+									item.setSprite();
+							}
+
+							this.enemyShipFormation.destroy(enemyShip);
 						}
-
-						this.enemyShipFormation.destroy(enemyShip);
 						recyclable.add(bullet);
 					}
 				if (this.enemyShipSpecial != null
