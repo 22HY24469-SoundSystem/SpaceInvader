@@ -95,7 +95,7 @@ public class GameScreen extends Screen {
 
 	private Item item;
 
-	private ItemPool itempool;
+	private ItemPool itemPool;
 
 	private Set<Item> itemIterator;
 
@@ -145,8 +145,8 @@ public class GameScreen extends Screen {
 
 		this.itemmanager = new ItemManager();
 
-		if(this.itempool == null){
-			this.itempool = new ItemPool();
+		if(this.itemPool == null){
+			this.itemPool = new ItemPool();
 		}
 
 	}
@@ -310,8 +310,8 @@ public class GameScreen extends Screen {
 		if(shield != null){
 				drawManager.drawEntity(shield, shield.getPositionX(),shield.getPositionY());}
 
-		if(itempool.getItem() != null && this.shield != null &&
-				itempool.getItem().getItemType() == Item.ItemType.ShieldItem){
+		if(itemPool.getItem() != null && this.shield != null &&
+				itemPool.getItem().getItemType() == Item.ItemType.ShieldItem){
 				drawManager.drawEntity(shield, shield.getPositionX(),
 				shield.getPositionY());}
 
@@ -395,51 +395,50 @@ public class GameScreen extends Screen {
 					}
 				}
 			} else {
-				for (EnemyShipFormation formation :
-						EnemyShipGenerator.shipFormationList) {
-					for (EnemyShip enemyShip : formation)
-						if (!enemyShip.isDestroyed()
-								&& checkCollision(bullet, enemyShip)) {
-							SoundPlay.getInstance().play(SoundType.enemyKill);
-							this.score += enemyShip.getPointValue();
-							this.shipsDestroyed++;
+				collideEnemyShip(bullet,recyclable);
+				collideDangerousSpecialShip(enemyShipSpecial, bullet, recyclable);
+				collideDangerousSpecialShip(enemyShipDangerous, bullet, recyclable);
 
-
-							if(enemyShip.getItemType() != null) {
-								enemyShip.itemDrop(itemIterator);
-								for(Item item : this.itemIterator)
-									if(item != null) item.setSprite();
-							}
-
-							formation.destroy(enemyShip);
-							recyclable.add(bullet);
-						}
-				}
-
-				if (this.enemyShipSpecial != null
-						&& !this.enemyShipSpecial.isDestroyed()
-						&& checkCollision(bullet, this.enemyShipSpecial)) {
-					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
-					this.score += this.enemyShipSpecial.getPointValue();
-
-					this.shipsDestroyed++;
-					this.enemyShipSpecial.destroy();
-					this.enemyShipSpecialExplosionCooldown.reset();
-					recyclable.add(bullet);
-				}
-				if (this.enemyShipDangerous != null
-						&& !this.enemyShipDangerous.isDestroyed()
-						&& checkCollision(bullet, this.enemyShipDangerous)) {
-					SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
-					this.score += this.enemyShipDangerous.getPointValue();
-					this.shipsDestroyed++;
-					this.enemyShipDangerous.destroy();
-					this.enemyShipDangerousExplosionCooldown.reset();
-					recyclable.add(bullet);
-				}
 			}
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
+	}
+
+	private void collideEnemyShip(Bullet bullet, Set<Bullet> recyclable){
+		for (EnemyShipFormation formation :
+				EnemyShipGenerator.shipFormationList) {
+			for (EnemyShip enemyShip : formation)
+				if (!enemyShip.isDestroyed()
+						&& checkCollision(bullet, enemyShip)) {
+					SoundPlay.getInstance().play(SoundType.enemyKill);
+					this.score += enemyShip.getPointValue();
+					this.shipsDestroyed++;
+
+
+					if(enemyShip.getItemType() != null) {
+						enemyShip.itemDrop(itemIterator);
+						for(Item item : this.itemIterator)
+							if(item != null) item.setSprite();
+					}
+
+					formation.destroy(enemyShip);
+					recyclable.add(bullet);
+				}
+		}
+	}
+
+	private void collideDangerousSpecialShip(EnemyShip enemyShip, Bullet bullet,Set<Bullet> recyclable){
+		if (enemyShip != null
+				&& !enemyShip.isDestroyed()
+				&& checkCollision(bullet, enemyShip)) {
+			SoundPlay.getInstance().play(SoundType.bonusEnemyKill);
+			this.score += enemyShip.getPointValue();
+			this.shipsDestroyed++;
+			enemyShip.destroy();
+			if(enemyShip == enemyShipDangerous){ enemyShipDangerousExplosionCooldown.reset();}
+			else enemyShipSpecialExplosionCooldown.reset();
+			recyclable.add(bullet);
+		}
 	}
 
 	/**
@@ -481,62 +480,54 @@ public class GameScreen extends Screen {
 	private void manageGetItem(Item item) {
 		if (checkCollision(item, this.ship) && !this.levelFinished) {
 
-			itempool.add(item);
+			itemPool.add(item);
 			item.setSprite();
 
-			if (!item.getAcquired() &&
-					itempool.getItem().getItemType() == Item.ItemType.BulletSpeedItem) {
+			if (!item.getAcquired()) {
+				if (itemPool.getItem().getItemType() == Item.ItemType.BulletSpeedItem) {
 
-				this.returnCode = 0;
-				this.clearItem();//효과초기화
-				this.clearPointUp();
-				this.itemInfoCooldown.reset();
+					this.returnCode = 0;
+					this.clearItem();//효과초기화
+					this.clearPointUp();
+					this.itemInfoCooldown.reset();
 
-				this.ship.setBulletSpeed(2 * ship.getBulletSpeed());
+					this.ship.setBulletSpeed(2 * ship.getBulletSpeed());
 
-			}
-			else if (!item.getAcquired() &&
-					itempool.getItem().getItemType() == Item.ItemType.PointUpItem) {
+				} else if (itemPool.getItem().getItemType() == Item.ItemType.PointUpItem) {
 
-				this.returnCode = 1;
-				this.clearItem();//효과 초기화
-				this.itemInfoCooldown.reset();
-				for (EnemyShipFormation formation :
-						EnemyShipGenerator.shipFormationList) {
-					for (EnemyShip enemyShip : formation)
-						enemyShip.setPointValue(2 * enemyShip.getPointValue());
+					this.returnCode = 1;
+					this.clearItem();//효과 초기화
+					this.itemInfoCooldown.reset();
+					for (EnemyShipFormation formation :
+							EnemyShipGenerator.shipFormationList) {
+						for (EnemyShip enemyShip : formation)
+							enemyShip.setPointValue(2 * enemyShip.getPointValue());
+					}
+
+				} else if (itemPool.getItem().getItemType() == Item.ItemType.MachineGun) {
+
+					LOGGER.info("Obtained MachineGun");
+
+					this.clearItem();//효과 초기화
+
+					this.ship.setShootingInterval(0.1 * this.ship.getShootingInterval());
+
+				} else if (itemPool.getItem().getItemType() == Item.ItemType.ShieldItem) {
+
+					this.returnCode = 2;
+					this.clearItem();
+					this.clearPointUp();
+					this.itemInfoCooldown.reset();
+					shield = new Shield(this.ship.getPositionX(), this.ship.getPositionY() - 3, this.ship);
+
+				} else if (itemPool.getItem().getItemType() == Item.ItemType.SpeedUpItem) {
+
+					this.returnCode = 3;
+					this.clearItem();//효과 초기화
+					this.clearPointUp();
+					this.itemInfoCooldown.reset();
+					this.ship.setShipSpeed(2 * this.ship.getSpeed());
 				}
-
-			}
-			else if (!item.getAcquired() &&
-					itempool.getItem().getItemType() == Item.ItemType.MachineGun) {
-
-				LOGGER.info("Obtained MachineGun");
-
-				this.clearItem();//효과 초기화
-
-				this.ship.setShootingInterval(0.1 * this.ship.getShootingInterval());
-
-			}
-			else if (!item.getAcquired() &&
-					itempool.getItem().getItemType() == Item.ItemType.ShieldItem) {
-
-				this.returnCode = 2;
-				this.clearItem();
-				this.clearPointUp();
-				this.itemInfoCooldown.reset();
-				shield = new Shield(this.ship.getPositionX(), this.ship.getPositionY() - 3, this.ship);
-
-			}
-			else if (!item.getAcquired() &&
-					itempool.getItem().getItemType() == Item.ItemType.SpeedUpItem) {
-
-				this.returnCode = 3;
-				this.clearItem();//효과 초기화
-				this.clearPointUp();
-				this.itemInfoCooldown.reset();
-				this.ship.setShipSpeed(2 * this.ship.getSpeed());
-			}
 //			else if (item.getIsGet() == false &&
 //					itemPool.getItem().getItemType() == Item.ItemType.EnemyShipSpeedItem) {
 //
@@ -547,20 +538,18 @@ public class GameScreen extends Screen {
 //				this.enemyShipFormation.setMovementSpeed(5 * this.enemyShipFormation.getMovementSpeed());
 //
 //			}
-			else if (!item.getAcquired() &&
-					itempool.getItem().getItemType() == Item.ItemType.ExtraLifeItem) {
+				else if (itemPool.getItem().getItemType() == Item.ItemType.ExtraLifeItem) {
 
-				this.clearItem();
-				this.clearPointUp();
-				if (lives < 4) {
-					lives++;
-					this.returnCode = 5;
-					this.itemInfoCooldown.reset();
+					this.clearItem();
+					this.clearPointUp();
+					if (lives < 4) {
+						lives++;
+						this.returnCode = 5;
+						this.itemInfoCooldown.reset();
+					} else
+						LOGGER.warning("생명 4개 초과");
 				}
-				else
-					LOGGER.warning("생명 4개 초과");
 			}
-
 			item.setAcquired(true);
 		}
 	}
