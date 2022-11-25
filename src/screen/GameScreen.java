@@ -326,7 +326,7 @@ if ( lives == 0 && !this.levelFinished) {
 		drawManager.drawScore(this, this.score);
 		drawManager.drawLives(this, lives);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
-
+		drawManager.drawExperienceBar(this, this.score);
 		// Countdown to game start.
 		if (!this.inputDelay.checkFinished()) {
 			int countdown = (int) ((INPUT_DELAY

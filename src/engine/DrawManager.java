@@ -20,6 +20,8 @@ import entity.Ship;
 import entity.Life;
 import sound.SoundPlay;
 
+import static java.awt.image.ImageObserver.WIDTH;
+
 /**
  * Manages screen drawing.
  * 
@@ -226,9 +228,21 @@ public final class DrawManager {
 							+ j * 2, 1, 1);
 	}
 
+	public void drawExperience(final Entity entity, final int positionX,
+						   final int positionY) {
+		//boolean[][] image = spriteMap.get(entity.getSpriteType());
+
+		backBufferGraphics.setColor(entity.getColor());
+		for (int i = 0; i < 40; i++)
+			for (int j = 0; j < 5; j++)
+					backBufferGraphics.drawRect(positionX + i * 2, positionY
+							+ j * 2, 1, 1);
+	}
+
+
 	/**
 	 * For debugging purpouses, draws the canvas borders.
-	 * 
+	 *
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -279,6 +293,21 @@ public final class DrawManager {
 		backBufferGraphics.setColor(Color.green);
 		String scoreString = String.format("Level: %02d", level);
 		backBufferGraphics.drawString(scoreString, screen.getWidth() - 255, 25);
+	}
+	public void drawExperienceBar(final Screen screen, final int score) {
+		backBufferGraphics.setFont(fontRegular);
+		backBufferGraphics.setColor(Color.cyan);
+		//String experienceString = String.format(" %04d", score);
+		//backBufferGraphics.drawString(experienceString, screen.getWidth() - 70, 466);
+		Life remainLife = new Life(0, 0);
+		for (int i=0; i < score/10; i++){
+			drawExperience(remainLife, screen.getWidth() - 488+(i*40), 480);
+			if(i==9) {
+				i=0;
+
+			}
+		}
+
 	}
 
 	/**
