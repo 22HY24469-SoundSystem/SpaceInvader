@@ -60,6 +60,8 @@ public class GameScreen extends Screen {
 	private Ship ship;
 	/** Bonus enemy ship that appears sometimes. */
 	private EnemyShip enemyShipSpecial;
+
+	private ExpManager expManager;
 	/** Dangerous enemy ship that appears sometimes. */
 	private EnemyShip enemyShipDangerous;
 	/** Minimum time between bonus ship appearances. */
@@ -76,6 +78,10 @@ public class GameScreen extends Screen {
 	private Cooldown itemInfoCooldown;
 	/** Set of all bullets fired by on-screen ships. */
 	private Set<Bullet> bullets;
+
+	private Set<EXPItem> expItems;
+
+	private int EXP_SPEED = 2;
 	/** Current score. */
 	private int score;
 	/** Player lives left. */
@@ -134,6 +140,7 @@ public class GameScreen extends Screen {
 		this.bonusLife = bonusLife;
 		this.level = gameState.getLevel();
 		this.score = gameState.getScore();
+		this.expManager = new ExpManager();
 		lives = gameState.getLivesRemaining();
 		if (this.bonusLife)
 			lives++;
@@ -194,6 +201,7 @@ public class GameScreen extends Screen {
 		///////////////////////////////////
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<>();
+		this.expItems = new HashSet<>();
 		this.itemIterator = new HashSet<>();
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -257,6 +265,7 @@ public class GameScreen extends Screen {
 		manageCollisions();
 		cleanItems();
 		cleanBullets();
+		cleanEXPItems();
 		draw();
 if ( lives == 0 && !this.levelFinished) {
 			this.levelFinished = true;
@@ -321,6 +330,10 @@ if ( lives == 0 && !this.levelFinished) {
 			drawManager.drawEntity(bullet, bullet.getPositionX(),
 					bullet.getPositionY());
 
+		for(EXPItem expItem : this.expItems)
+			drawManager.drawEntity(expItem, expItem.getPositionX(), expItem.getPositionY());
+
+
 		// Interface.
 		drawManager.drawLevels(this, this.level);
 		drawManager.drawScore(this, this.score);
@@ -371,11 +384,27 @@ if ( lives == 0 && !this.levelFinished) {
 		BulletPool.recycle(recyclable);
 	}
 
+	private void cleanEXPItems(){
+		Set<EXPItem> recyclable = new HashSet<>();
+		for(EXPItem expItem : this.expItems){
+			expItem.update();
+			if(expItem.getPositionY() < SEPARATION_LINE_HEIGHT
+					|| expItem.getPositionY() > this.height-35){
+				expItem.setSpeed(0);
+			}
+			if(expItems.size() > 10){
+
+
+			}
+		}
+	}
+
 	/**
 	 * Manages collisions between bullets and ships.
 	 */
 	private void manageCollisions() {
 		Set<Bullet> recyclable = new HashSet<>();
+		Set<EXPItem> expRecyclable = new HashSet<>();
 		for (Bullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
@@ -399,6 +428,17 @@ if ( lives == 0 && !this.levelFinished) {
 				collideDangerousSpecialShip(enemyShipSpecial, bullet, recyclable);
 				collideDangerousSpecialShip(enemyShipDangerous, bullet, recyclable);
 			}
+		for(EXPItem expItem : this.expItems){
+			if(expItem.getSpeed() == 0){
+				if(checkCollision(expItem, this.ship) && !this.levelFinished){
+					expRecyclable.add(expItem);
+					expManager.plusExp(40);
+					logger.info(Integer.toString(expManager.getExp()));
+				}
+			}
+		}
+		this.expItems.removeAll(expRecyclable);
+		EXPItemPool.recycle(expRecyclable);
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
 	}
@@ -413,6 +453,7 @@ if ( lives == 0 && !this.levelFinished) {
 					this.score += enemyShip.getPointValue();
 					this.shipsDestroyed++;
 
+					expItems.add(EXPItemPool.getEXP(enemyShip.getPositionX(), enemyShip.getPositionY(), EXP_SPEED));
 
 					if(enemyShip.getItemType() != null) {
 						enemyShip.itemDrop(itemIterator);
@@ -475,6 +516,13 @@ if ( lives == 0 && !this.levelFinished) {
 				this.bulletsShot, this.shipsDestroyed);
 	}
 
+	private void manageGetEXPItem(EXPItem item){
+		if(checkCollision(item, this.ship) && !this.levelFinished){
+			if(!item.getAcquired()){
+
+			}
+		}
+	}
 
 	private void manageGetItem(Item item) {
 		if (checkCollision(item, this.ship) && !this.levelFinished) {
