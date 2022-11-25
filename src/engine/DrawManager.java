@@ -19,6 +19,7 @@ import entity.Entity;
 import entity.Ship;
 import entity.Life;
 import sound.SoundPlay;
+import engine.*;
 
 import static java.awt.image.ImageObserver.WIDTH;
 
@@ -55,6 +56,8 @@ public final class DrawManager {
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
+
+	public static int maxExp;
 
 	Color[] colors = {Color.gray, Color.darkGray, Color.black};
 
@@ -228,17 +231,6 @@ public final class DrawManager {
 							+ j * 2, 1, 1);
 	}
 
-	public void drawExperience(final Entity entity, final int positionX,
-						   final int positionY) {
-		//boolean[][] image = spriteMap.get(entity.getSpriteType());
-
-		backBufferGraphics.setColor(entity.getColor());
-		for (int i = 0; i < 40; i++)
-			for (int j = 0; j < 5; j++)
-					backBufferGraphics.drawRect(positionX + i * 2, positionY
-							+ j * 2, 1, 1);
-	}
-
 
 	/**
 	 * For debugging purpouses, draws the canvas borders.
@@ -288,26 +280,12 @@ public final class DrawManager {
 		backBufferGraphics.drawString(scoreString, screen.getWidth() - 120, 25);
 	}
 
-	public void drawLevels(final Screen screen, final int level) {
+	public void drawLevels(final Screen screen, final int percentExp) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.green);
-		String scoreString = String.format("Level: %02d", level);
-		backBufferGraphics.drawString(scoreString, screen.getWidth() - 255, 25);
-	}
-	public void drawExperienceBar(final Screen screen, final int score) {
-		backBufferGraphics.setFont(fontRegular);
-		backBufferGraphics.setColor(Color.cyan);
-		//String experienceString = String.format(" %04d", score);
-		//backBufferGraphics.drawString(experienceString, screen.getWidth() - 70, 466);
-		Life remainLife = new Life(0, 0);
-		for (int i=0; i < score/10; i++){
-			drawExperience(remainLife, screen.getWidth() - 488+(i*40), 480);
-			if(i==9) {
-				i=0;
-
-			}
-		}
-
+		//String scoreString = String.format("Level: %02d", level);
+		//backBufferGraphics.drawString(scoreString, screen.getWidth() - 255, 25);
+		backBufferGraphics.drawString(Integer.toString(percentExp), screen.getWidth() - 255, 25);
 	}
 
 	/**
@@ -326,7 +304,15 @@ public final class DrawManager {
 		for (int i = 0; i < lives; i++)
 			drawEntity(remainLife, 40 + 35 * i, 6);
 	}
-
+	public void drawExp(final Screen screen, final int exp, final int percentExp, final int maxExp){
+		backBufferGraphics.setFont(fontRegular);
+		backBufferGraphics.setColor(Color.white);
+		backBufferGraphics.drawRoundRect(5, 55, screen.getWidth()-10, 10, 10, 10);
+		backBufferGraphics.fillRoundRect(5, 55, (int)(((screen.getWidth()-10) / 100.0)*percentExp), 10, 10, 10);
+		//backBufferGraphics.drawString(Integer.toString(percentExp), screen.getWidth()/2, 85);
+		backBufferGraphics.drawString("(  "+exp +" / ", 10, 85);
+		backBufferGraphics.drawString( maxExp+" )", 60, 85);
+	}
 	/**
 	 * Draws a thick line from side to side of the screen.
 	 * 
