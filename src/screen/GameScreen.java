@@ -407,20 +407,24 @@ if ( lives == 0 && !this.levelFinished) {
 		for (EnemyShipFormation formation :
 				EnemyShipGenerator.shipFormationList) {
 			for (EnemyShip enemyShip : formation)
+      
 				if (!enemyShip.isDestroyed()
 						&& checkCollision(bullet, enemyShip)) {
-					SoundPlay.getInstance().play(SoundType.enemyKill);
-					this.score += enemyShip.getPointValue();
-					this.shipsDestroyed++;
+          enemyShip.decreaseHP();
+          if (enemyShip.isDestroyed()) {
+            SoundPlay.getInstance().play(SoundType.enemyKill);
+            this.score += enemyShip.getPointValue();
+            this.shipsDestroyed++;
 
 
-					if(enemyShip.getItemType() != null) {
-						enemyShip.itemDrop(itemIterator);
-						for(Item item : this.itemIterator)
-							if(item != null) item.setSprite();
-					}
+            if(enemyShip.getItemType() != null) {
+              enemyShip.itemDrop(itemIterator);
+              for(Item item : this.itemIterator)
+                if(item != null) item.setSprite();
+            }
 
-					formation.destroy(enemyShip);
+            formation.destroy(enemyShip);
+          }
 					recyclable.add(bullet);
 				}
 		}

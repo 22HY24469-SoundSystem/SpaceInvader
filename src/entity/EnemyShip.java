@@ -20,7 +20,9 @@ public class EnemyShip extends Entity {
 	private static int hasItem ;
 	/** Point value of a type A enemy. */
 	//s
-
+	
+	// HP
+	private int Hp = 3;
 
 	/** Point value of a type A enemy. */
 	private static final int A_TYPE_POINTS = 10;
@@ -56,6 +58,9 @@ public class EnemyShip extends Entity {
 		this.itemtype = null;
 		this.hasItem = 0;
 		//
+		
+		//Hp
+		this.Hp = 3;
 
 
 		this.spriteType = spriteType;
@@ -108,7 +113,11 @@ public class EnemyShip extends Entity {
 
 	}
 
-
+	//Hp
+	public void decreaseHP() {
+		this.Hp -= 1;
+		if (this.Hp <= 0) this.destroy();
+	}
 	//추가
 
 
