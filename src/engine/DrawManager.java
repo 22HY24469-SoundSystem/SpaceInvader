@@ -400,7 +400,7 @@ public final class DrawManager {
 		String highScoresString = "High scores";
 		String exitString = "exit";
 		String setString = "setting";
-		String loadString = "load";
+//		String loadString = "load";
 		String storeString = "store";
 		String helpString = "help";
 				
@@ -427,26 +427,20 @@ public final class DrawManager {
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, loadString, screen.getHeight() / 
+		drawCenteredRegularString(screen, setString, screen.getHeight() / 
 				 3 + fontRegularMetrics.getHeight() * 6);
 		if (option == 6)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
-		drawCenteredRegularString(screen, setString, screen.getHeight() / 
-				 3 + fontRegularMetrics.getHeight() * 8);
-		if (option == 7)
-			backBufferGraphics.setColor(Color.GREEN);
-		else
-			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, helpString, screen.getHeight() / 
-				 3 + fontRegularMetrics.getHeight() * 10);
+				 3 + fontRegularMetrics.getHeight() * 8);
 		if (option == 0)
 			backBufferGraphics.setColor(Color.GREEN);
 		else
 			backBufferGraphics.setColor(Color.WHITE);
 		drawCenteredRegularString(screen, exitString, screen.getHeight() / 
-				 3 + fontRegularMetrics.getHeight() * 12);
+				 3 + fontRegularMetrics.getHeight() * 10);
 		
 	}
 	//mainmenu 1014
@@ -1066,7 +1060,7 @@ public final class DrawManager {
 
 	public void drawStageClearScreen(final Screen screen, final int option){
 		String continueString = "Continue";
-		String saveString = "Save & Exit";
+		String saveString = "Exit";
 
 		if(option == 1)
 			backBufferGraphics.setColor(Color.GREEN);

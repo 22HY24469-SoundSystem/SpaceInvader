@@ -31,9 +31,9 @@ import screen.PauseScreen;
 public final class Core {
 
 	/** Width of current screen. */
-	private static final int WIDTH = 448;
+	private static final int WIDTH = 490;
 	/** Height of current screen. */
-	private static final int HEIGHT = 520;
+	private static final int HEIGHT = 490;
 	/** Max fps of current screen. */
 	private static final int FPS = 60;
 
@@ -277,13 +277,6 @@ public final class Core {
 				break;
 
 			case 5:
-				// Load
-				String save_info [] = getFileManager().loadInfo();
-				gameState = new GameState(Integer.parseInt(save_info[0]), Integer.parseInt(save_info[1]), Integer.parseInt(save_info[2]), Integer.parseInt(save_info[3]), Integer.parseInt(save_info[4]));
-				returnCode = 2;
-				break;
-				
-			case 6:
 				// Setting.
 				currentScreen = new SettingScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
@@ -292,7 +285,7 @@ public final class Core {
 				LOGGER.info("Closing setting screen.");
 				break;
 				
-			case 7: //Help
+			case 6: //Help
 				currentScreen = new HelpScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " setting screen at " + FPS + " fps.");
@@ -300,7 +293,7 @@ public final class Core {
 				LOGGER.info("Closing help screen.");
 				break;
 				
-			case 8: //Volume //mainmenu 1014
+			case 7: //Volume //mainmenu 1014
 				currentScreen = new VolumeScreen(width, height, FPS);
 				LOGGER.info("Starting " + WIDTH + "x" + HEIGHT
 						+ " setting screen at " + FPS + " fps.");
