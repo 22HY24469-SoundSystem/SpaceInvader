@@ -399,6 +399,27 @@ if ( lives == 0 && !this.levelFinished) {
 				collideDangerousSpecialShip(enemyShipSpecial, bullet, recyclable);
 				collideDangerousSpecialShip(enemyShipDangerous, bullet, recyclable);
 			}
+
+		for (EnemyShipFormation formation :
+				EnemyShipGenerator.shipFormationList) {
+			for (EnemyShip enemyShip : formation){
+				if(checkCollision(enemyShip, this.ship) && !this.levelFinished){
+
+					if (shield == null && !this.ship.isDestroyed()){
+						SoundPlay.getInstance().play(SoundType.hit);
+						this.ship.destroy();
+						this.lives--;
+						this.logger.info("Hit on player ship, " + this.lives
+								+ " lives remaining.");
+						this.clearItem();
+					}
+					else if (!this.ship.isDestroyed()){
+						shield = null;
+					}
+				}
+			}
+
+		}
 		this.bullets.removeAll(recyclable);
 		BulletPool.recycle(recyclable);
 	}
