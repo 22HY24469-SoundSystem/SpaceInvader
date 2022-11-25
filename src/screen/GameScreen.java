@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.Queue;
+import java.util.LinkedList;
 import engine.*;
 import entity.*;
 import engine.Cooldown;
@@ -79,7 +81,7 @@ public class GameScreen extends Screen {
 	/** Set of all bullets fired by on-screen ships. */
 	private Set<Bullet> bullets;
 
-	private Set<EXPItem> expItems;
+	private Queue<EXPItem> expItems;
 
 	private int EXP_SPEED = 2;
 	/** Current score. */
@@ -201,7 +203,7 @@ public class GameScreen extends Screen {
 		///////////////////////////////////
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<>();
-		this.expItems = new HashSet<>();
+		this.expItems = new LinkedList<EXPItem>();
 		this.itemIterator = new HashSet<>();
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -386,17 +388,20 @@ if ( lives == 0 && !this.levelFinished) {
 
 	private void cleanEXPItems(){
 		Set<EXPItem> recyclable = new HashSet<>();
+		int cnt = 0;
 		for(EXPItem expItem : this.expItems){
 			expItem.update();
 			if(expItem.getPositionY() < SEPARATION_LINE_HEIGHT
 					|| expItem.getPositionY() > this.height-35){
 				expItem.setSpeed(0);
 			}
-			if(expItems.size() > 10){
 
-
-			}
 		}
+		if(this.expItems.size() > 10){
+			recyclable.add(this.expItems.poll());
+		}
+		this.expItems.removeAll(recyclable);
+		EXPItemPool.recycle(recyclable);
 	}
 
 	/**
@@ -516,13 +521,7 @@ if ( lives == 0 && !this.levelFinished) {
 				this.bulletsShot, this.shipsDestroyed);
 	}
 
-	private void manageGetEXPItem(EXPItem item){
-		if(checkCollision(item, this.ship) && !this.levelFinished){
-			if(!item.getAcquired()){
 
-			}
-		}
-	}
 
 	private void manageGetItem(Item item) {
 		if (checkCollision(item, this.ship) && !this.levelFinished) {
