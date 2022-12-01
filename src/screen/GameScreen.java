@@ -124,8 +124,6 @@ public class GameScreen extends Screen {
 	 *            Current game state.
 	 * @param gameSettings
 	 *            Current game settings.
-	 * @param bonusLife
-	 *            Checks if a bonus life is awarded this level.
 	 * @param width
 	 *            Screen width.
 	 * @param height
@@ -134,18 +132,15 @@ public class GameScreen extends Screen {
 	 *            Frames per second, frame rate at which the game is run.
 	 */
 	public GameScreen(final GameState gameState,
-			final GameSettings gameSettings, final boolean bonusLife,
+			final GameSettings gameSettings,
 			final int width, final int height, final int fps) {
 		super(width, height, fps);
 
 		this.gameSettings = gameSettings;
-		this.bonusLife = bonusLife;
 		this.level = gameState.getLevel();
 		this.score = gameState.getScore();
 		this.expManager = new ExpManager();
 		lives = gameState.getLivesRemaining();
-		if (this.bonusLife)
-			lives++;
 		if(lives == 0){
 			SoundPlay.getInstance().stopBgm();
 		}
@@ -203,7 +198,7 @@ public class GameScreen extends Screen {
 		///////////////////////////////////
 		this.screenFinishedCooldown = Core.getCooldown(SCREEN_CHANGE_INTERVAL);
 		this.bullets = new HashSet<>();
-		this.expItems = new LinkedList<EXPItem>();
+		this.expItems = new LinkedList<>();
 		this.itemIterator = new HashSet<>();
 		// Special input delay / countdown.
 		this.gameStartTime = System.currentTimeMillis();
@@ -269,7 +264,7 @@ public class GameScreen extends Screen {
 		cleanBullets();
 		cleanEXPItems();
 		draw();
-if ( lives == 0 && !this.levelFinished) {
+		if ( lives == 0 && !this.levelFinished) {
 			this.levelFinished = true;
 			this.screenFinishedCooldown.reset();
 		}
@@ -347,8 +342,7 @@ if ( lives == 0 && !this.levelFinished) {
 			int countdown = (int) ((INPUT_DELAY
 					- (System.currentTimeMillis()
 							- this.gameStartTime)) / 1000);
-			drawManager.drawCountDown(this, this.level, countdown,
-					this.bonusLife);
+			drawManager.drawCountDown(this, countdown);
 			drawManager.drawHorizontalLine(this, this.height / 2 - this.height
 					/ 12);
 			drawManager.drawHorizontalLine(this, this.height / 2 + this.height
