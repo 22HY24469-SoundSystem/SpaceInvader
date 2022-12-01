@@ -455,7 +455,7 @@ if ( lives == 0 && !this.levelFinished) {
       
 				if (!enemyShip.isDestroyed()
 						&& checkCollision(bullet, enemyShip)) {
-          enemyShip.decreaseHP();
+          enemyShip.decreaseHP(bullet.getDamage());
           if (enemyShip.isDestroyed()) {
             SoundPlay.getInstance().play(SoundType.enemyKill);
             this.score += enemyShip.getPointValue();
