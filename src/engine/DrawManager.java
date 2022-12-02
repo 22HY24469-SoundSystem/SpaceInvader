@@ -45,9 +45,9 @@ public final class DrawManager {
 	private static Graphics backBufferGraphics;
 	/** Buffer image. */
 	private static BufferedImage backBuffer;
-	/** Normal sized font. */
+	/** Normal-sized font. */
 	private static Font fontRegular;
-	/** Normal sized font properties. */
+	/** Normal-sized font properties. */
 	private static FontMetrics fontRegularMetrics;
 	/** Big sized font. */
 	private static Font fontBig;
@@ -62,7 +62,7 @@ public final class DrawManager {
 	Color[] colors = {Color.gray, Color.darkGray, Color.black};
 
 	/** Sprite types. */
-	public static enum SpriteType {
+	public enum SpriteType {
 		/** Player ship. */
 		Ship,
 		/** Destroyed player ship. */
@@ -86,7 +86,7 @@ public final class DrawManager {
 		/** Bonus ship. */
 		EnemyShipSpecial,
 		/** Destroyed enemy ship. */
-		EnemyShipdangerous,
+		EnemyShipDangerous,
 
 		Explosion,
 
@@ -99,7 +99,7 @@ public final class DrawManager {
     /** Life shape */
 		Life
 
-	};
+	}
 
 	/**
 	 * Private constructor.
@@ -110,7 +110,7 @@ public final class DrawManager {
 		logger.info("Started loading resources.");
 
 		try {
-			spriteMap = new LinkedHashMap<SpriteType, boolean[][]>();
+			spriteMap = new LinkedHashMap<>();
 
 			spriteMap.put(SpriteType.Ship, new boolean[13][8]);
 			spriteMap.put(SpriteType.ShipDestroyed, new boolean[13][8]);
@@ -128,9 +128,9 @@ public final class DrawManager {
 			spriteMap.put(SpriteType.ItemGet, new boolean[5][5]);
 			spriteMap.put(SpriteType.Shield, new boolean[13][1]);
 			spriteMap.put(SpriteType.Life, new boolean[13][13]);
-			spriteMap.put(SpriteType.EnemyShipdangerous, new boolean[16][7]);
+			spriteMap.put(SpriteType.EnemyShipDangerous, new boolean[16][7]);
 
-			fileManager.readship();//read ship파일
+			fileManager.readship();//read ship 파일
 			fileManager.loadSprite(spriteMap);
 			logger.info("Finished loading the sprites.");
 
@@ -142,7 +142,7 @@ public final class DrawManager {
 		} catch (IOException e) {
 			logger.warning("Loading failed.");
 		} catch (FontFormatException e) {
-			logger.warning("Font formating failed.");
+			logger.warning("Font formatting failed.");
 		}
 	}
 
@@ -169,7 +169,7 @@ public final class DrawManager {
 	}
 
 	/**
-	 * First part of the drawing process. Initialices buffers, draws the
+	 * First part of the drawing process. Initialize buffers, draws the
 	 * background and prepares the images.
 	 * 
 	 * @param screen
@@ -210,7 +210,7 @@ public final class DrawManager {
 	}
 
 	/**
-	 * Draws an entity, using the apropiate image.
+	 * Draws an entity, using the appropriate image.
 	 * 
 	 * @param entity
 	 *            Entity to be drawn.
@@ -233,8 +233,8 @@ public final class DrawManager {
 
 
 	/**
-	 * For debugging purpouses, draws the canvas borders.
-	 *
+	 * For debugging purposes, draws the canvas borders.
+	 * 
 	 * @param screen
 	 *            Screen to draw in.
 	 */
@@ -250,7 +250,7 @@ public final class DrawManager {
 	}
 
 	/**
-	 * For debugging purpouses, draws a grid over the canvas.
+	 * For debugging purposes, draws a grid over the canvas.
 	 * 
 	 * @param screen
 	 *            Screen to draw in.
@@ -346,7 +346,7 @@ public final class DrawManager {
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, titleString, screen.getHeight() / 6);
 	}
-	//mainmenu 1014
+	//mainMenu 1014
 	public void drawSetting(final Screen screen) {
 		String titleString = "Setting";
 		String instructionsString =
@@ -359,7 +359,7 @@ public final class DrawManager {
 		backBufferGraphics.setColor(Color.GREEN);
 		drawCenteredBigString(screen, titleString, screen.getHeight() / 6);
 	}
-	//mainmenu 1014
+	//mainMenu 1014
 	public void drawVolume(final Screen screen, final int volume, final int option){
 		String volumeString = "Bgm";
 		String effectString = "Effect";
@@ -458,7 +458,7 @@ public final class DrawManager {
 				 3 + fontRegularMetrics.getHeight() * 10);
 		
 	}
-	//mainmenu 1014
+	//mainMenu 1014
 	public void drawSettingMenu(final Screen screen, final int option) {
 		String VolumeString = "Sound";
 		String BackString = "Back";
@@ -618,7 +618,7 @@ public final class DrawManager {
 		String scoreString = String.format("score %04d", score);
 		String livesRemainingString = "lives remaining " + livesRemaining;
 		String shipsDestroyedString = "enemies destroyed " + shipsDestroyed;
-		String GetcoinString = "Get coins " + coin;
+		String getCoinString = "Get coins " + coin;
 
 		int height = isNewRecord ? 4 : 2;
 
@@ -631,7 +631,7 @@ public final class DrawManager {
 		drawCenteredRegularString(screen, shipsDestroyedString,
 				screen.getHeight() / height + fontRegularMetrics.getHeight()
 						* 4);
-		drawCenteredRegularString(screen, GetcoinString, screen.getHeight()
+		drawCenteredRegularString(screen, getCoinString, screen.getHeight()
 				/ height + fontRegularMetrics.getHeight() * 6);
 	}
 
@@ -737,14 +737,14 @@ public final class DrawManager {
 		String item3 = "move speed up"; // 아이템3 
 		String item3_1 = "move speed up of ship "; // 아이템3
 		
-		String item4 = "machinegun"; // 아이템4 
+		String item4 = "machine gun"; // 아이템4
 		String item4_1 = "decrease bullet interval "; // 아이템4 
 		
 		String item5 = "bullet speed up"; // 아이템5 
 		String item5_1 = "increase bullet speed "; // 아이템5
 		
 		String item6 = "point up"; // 아이템6 
-		String item6_1 = "increase kill point earned per enermy "; // 아이템6 
+		String item6_1 = "increase kill point earned per enemy "; // 아이템6
 		
 		
 		
@@ -859,7 +859,7 @@ public final class DrawManager {
 			final List<Score> highScores) {
 		backBufferGraphics.setColor(Color.WHITE);
 		int i = 0;
-		String scoreString = "";
+		String scoreString;
 		
 		for (Score score : highScores) {
 
@@ -897,7 +897,7 @@ public final class DrawManager {
 	 * @param menu
 	 *            Menu selected.
 	 * @param focus
-	 * 			  Gacha selected.
+	 * 			  Gotcha selected.
 	 */
 	public void drawStoreMenu(final Screen screen, final int menu, final int focus) {
 		String shipShapeString = "ship shape";
@@ -938,8 +938,8 @@ public final class DrawManager {
 				screen.getHeight() / 2 + fontRegularMetrics.getHeight() * 8);
 	}
 
-	public void drawStoreGacha(final Screen screen, final int menu, final int focus) {
-		String rerollString = "reroll!(100$)";
+	public void drawStoreGotcha(final Screen screen, final int menu, final int focus) {
+		String rerollString = "ReRoll!(100$)";
 		String coinLackString = "Not enough coins!";
 		PermanentState permanentState = PermanentState.getInstance();
 		if (focus == 0)
@@ -1031,41 +1031,19 @@ public final class DrawManager {
 	 * 
 	 * @param screen
 	 *            Screen to draw on.
-	 * @param level
-	 *            Game difficulty level.
+	 *
 	 * @param number
 	 *            Countdown number.
-	 * @param bonusLife
-	 *            Checks if a bonus life is received.
+	 *
 	 */
-	public void drawCountDown(final Screen screen, final int level,
-			final int number, final boolean bonusLife) {
+	public void drawCountDown(final Screen screen, final int number) {
 		int rectWidth = screen.getWidth();
 		int rectHeight = screen.getHeight() / 6;
 		backBufferGraphics.setColor(Color.BLACK);
 		backBufferGraphics.fillRect(0, screen.getHeight() / 2 - rectHeight / 2,
 				rectWidth, rectHeight);
 		backBufferGraphics.setColor(Color.GREEN);
-		if (number >= 4)
-			if (!bonusLife) {
-				if (level == 8){
-					drawCenteredBigString(screen, "Boss Stage",
-							screen.getHeight() / 2
-									+ fontBigMetrics.getHeight() / 3);
-				}
-				else {
-					drawCenteredBigString(screen, "Level " + level,
-							screen.getHeight() / 2
-									+ fontBigMetrics.getHeight() / 3);
-				}
-
-			} else {
-				drawCenteredBigString(screen, "Level " + level
-						+ " - Bonus life!",
-						screen.getHeight() / 2
-						+ fontBigMetrics.getHeight() / 3);
-			}
-		else if (number != 0)
+		if (number != 0)
 			drawCenteredBigString(screen, Integer.toString(number),
 					screen.getHeight() / 2 + fontBigMetrics.getHeight() / 3);
 		else

@@ -18,7 +18,7 @@ public class Bullet extends Entity {
 	 */
 	private int speed;
 	Color[] colors = {Color.WHITE, Color.LIGHT_GRAY, Color.GRAY, Color.DARK_GRAY, Color.RED, Color.PINK, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.MAGENTA, Color.CYAN, Color.BLUE};
-
+	private int damage;
 	/**
 	 * Constructor, establishes the bullet's properties.
 	 * 
@@ -35,6 +35,15 @@ public class Bullet extends Entity {
 
 		this.speed = speed;
 		setSprite();
+		this.damage = 1;
+	}
+
+	public Bullet(final int positionX, final int positionY, final int speed, final int damage) {
+		super(positionX, positionY, 3 * 2, 5 * 2, Color.WHITE);
+
+		this.speed = speed;
+		setSprite();
+		this.damage = damage;
 	}
 
 	/**
@@ -75,5 +84,9 @@ public class Bullet extends Entity {
 	 */
 	public final int getSpeed() {
 		return this.speed;
+	}
+
+	public final int getDamage() {
+		return this.damage;
 	}
 }

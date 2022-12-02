@@ -118,6 +118,11 @@ public class EnemyShip extends Entity {
 		this.Hp -= 1;
 		if (this.Hp <= 0) this.destroy();
 	}
+
+	public void decreaseHP(int damage) {
+		this.Hp -= damage;
+		if (this.Hp <= 0) this.destroy();
+	}
 	//추가
 
 

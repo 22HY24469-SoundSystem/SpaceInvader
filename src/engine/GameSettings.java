@@ -27,16 +27,16 @@ public class GameSettings {
 	 *            Height of the level's enemy formation.
 	 * @param baseSpeed
 	 *            Speed of the enemies.
-	 * @param shootingFrecuency
-	 *            Frecuency of enemy shootings, +/- 30%.
+	 * @param shootingFrequency
+	 *            Frequency of enemy shootings, +/- 30%.
 	 */
 	public GameSettings(final int level, final int formationWidth, final int formationHeight,
-			final int baseSpeed, final int shootingFrecuency) {
+			final int baseSpeed, final int shootingFrequency) {
 		this.level = level;
 		this.formationWidth = formationWidth;
 		this.formationHeight = formationHeight;
 		this.baseSpeed = baseSpeed;
-		this.shootingFrecuency = shootingFrecuency; //적군
+		this.shootingFrecuency = shootingFrequency; //적군
 	}
 
 	public final int getLevel() { return level; }
