@@ -5,8 +5,8 @@ public class ExpManager {
     private int lev = 0;
     private int percentExp = 0;
 
-    private int addMaxExp = 200;
-    private double maxExp = 600.0;
+    private int addMaxExp = 300; //200
+    private double maxExp = 300.0; //600
     public ExpManager(){
 
     }

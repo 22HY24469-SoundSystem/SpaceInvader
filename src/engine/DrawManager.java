@@ -19,6 +19,9 @@ import entity.Entity;
 import entity.Ship;
 import entity.Life;
 import sound.SoundPlay;
+import engine.*;
+
+import static java.awt.image.ImageObserver.WIDTH;
 
 /**
  * Manages screen drawing.
@@ -53,6 +56,8 @@ public final class DrawManager {
 
 	/** Sprite types mapped to their images. */
 	private static Map<SpriteType, boolean[][]> spriteMap;
+
+	public static int maxExp;
 
 	Color[] colors = {Color.gray, Color.darkGray, Color.black};
 
@@ -226,6 +231,7 @@ public final class DrawManager {
 							+ j * 2, 1, 1);
 	}
 
+
 	/**
 	 * For debugging purposes, draws the canvas borders.
 	 * 
@@ -274,11 +280,12 @@ public final class DrawManager {
 		backBufferGraphics.drawString(scoreString, screen.getWidth() - 120, 25);
 	}
 
-	public void drawLevels(final Screen screen, final int level) {
+	public void drawLevels(final Screen screen, final int percentExp) {
 		backBufferGraphics.setFont(fontRegular);
 		backBufferGraphics.setColor(Color.green);
-		String scoreString = String.format("Level: %02d", level);
-		backBufferGraphics.drawString(scoreString, screen.getWidth() - 255, 25);
+		//String scoreString = String.format("Level: %02d", level);
+		//backBufferGraphics.drawString(scoreString, screen.getWidth() - 255, 25);
+		backBufferGraphics.drawString(Integer.toString(percentExp), screen.getWidth() - 255, 25);
 	}
 
 	/**
@@ -297,7 +304,15 @@ public final class DrawManager {
 		for (int i = 0; i < lives; i++)
 			drawEntity(remainLife, 40 + 35 * i, 6);
 	}
-
+	public void drawExp(final Screen screen, final int exp, final int percentExp, final int maxExp){
+		backBufferGraphics.setFont(fontRegular);
+		backBufferGraphics.setColor(Color.white);
+		backBufferGraphics.drawRoundRect(5, 55, screen.getWidth()-10, 10, 10, 10);
+		backBufferGraphics.fillRoundRect(5, 55, (int)(((screen.getWidth()-10) / 100.0)*percentExp), 10, 10, 10);
+		//backBufferGraphics.drawString(Integer.toString(percentExp), screen.getWidth()/2, 85);
+		backBufferGraphics.drawString("(  "+exp +" / ", 10, 85);
+		backBufferGraphics.drawString( maxExp+" )", 60, 85);
+	}
 	/**
 	 * Draws a thick line from side to side of the screen.
 	 * 

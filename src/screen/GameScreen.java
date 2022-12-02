@@ -89,6 +89,8 @@ public class GameScreen extends Screen {
 	/** Player lives left. */
 	public static int lives;
 	/** Total bullets shot by the player. */
+	public static int exp;
+	/** now player Experience */
 	private int bulletsShot;
 	/** Total ships destroyed by the player. */
 	private int shipsDestroyed;
@@ -332,10 +334,11 @@ public class GameScreen extends Screen {
 
 
 		// Interface.
-		drawManager.drawLevels(this, this.level);
+		drawManager.drawLevels(this, this.expManager.getLev());
 		drawManager.drawScore(this, this.score);
 		drawManager.drawLives(this, lives);
 		drawManager.drawHorizontalLine(this, SEPARATION_LINE_HEIGHT - 1);
+		drawManager.drawExp(this, this.expManager.getExp(), this.expManager.getPercentExp(), this.expManager.getMaxExp());
 
 		// Countdown to game start.
 		if (!this.inputDelay.checkFinished()) {
