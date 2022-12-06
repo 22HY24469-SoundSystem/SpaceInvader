@@ -261,7 +261,8 @@ public class GameScreen extends Screen {
 				manageGetItem(item);
 			}
 		}
-		manageCollisions();
+		manageBulletCollisions();
+		manageEXPItemCollisions();
 		cleanItems();
 		cleanBullets();
 		cleanEXPItems();
@@ -404,9 +405,8 @@ public class GameScreen extends Screen {
 	/**
 	 * Manages collisions between bullets and ships.
 	 */
-	private void manageCollisions() {
+	private void manageBulletCollisions() {
 		Set<Bullet> recyclable = new HashSet<>();
-		Set<EXPItem> expRecyclable = new HashSet<>();
 		for (Bullet bullet : this.bullets)
 			if (bullet.getSpeed() > 0) {
 				if (checkCollision(bullet, this.ship) && !this.levelFinished) {
@@ -430,6 +430,12 @@ public class GameScreen extends Screen {
 				collideDangerousSpecialShip(enemyShipSpecial, bullet, recyclable);
 				collideDangerousSpecialShip(enemyShipDangerous, bullet, recyclable);
 			}
+		this.bullets.removeAll(recyclable);
+		BulletPool.recycle(recyclable);
+	}
+
+	private void manageEXPItemCollisions(){
+		Set<EXPItem> expRecyclable = new HashSet<>();
 		for(EXPItem expItem : this.expItems){
 			if(expItem.getSpeed() == 0){
 				if(checkCollision(expItem, this.ship) && !this.levelFinished){
@@ -441,8 +447,6 @@ public class GameScreen extends Screen {
 		}
 		this.expItems.removeAll(expRecyclable);
 		EXPItemPool.recycle(expRecyclable);
-		this.bullets.removeAll(recyclable);
-		BulletPool.recycle(recyclable);
 	}
 
 	private void collideEnemyShip(Bullet bullet, Set<Bullet> recyclable){
