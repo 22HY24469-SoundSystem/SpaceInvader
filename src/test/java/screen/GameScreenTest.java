@@ -1,13 +1,15 @@
 package screen;
 
+import engine.GameSettings;
+import engine.GameState;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class GameScreenTest {
-
+    private GameScreen gameScreen;
     @Test
-    void initialize() {
-        assertEquals(GameScreen.lives, -1);
+    void update() {
+        assertTrue(gameScreen.isRunning);
     }
 }
