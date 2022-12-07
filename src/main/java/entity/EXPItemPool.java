@@ -26,6 +26,10 @@ public class EXPItemPool {
         return expItem;
     }
 
+    public static Set<EXPItem> getPool(){
+        return pool;
+    }
+
     public static void recycle(final Set<EXPItem> expItem) {
         pool.addAll(expItem);
     }

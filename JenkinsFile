@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Build'){
+            steps {
+                echo 'Clone'
+                git branch: 'main_with_maven', credentialsId: 'kcyoow', url: 'https://github.com/22HY24469-SoundSystem/SpaceInvader.git'
+                chmod -x mvnw
+                sh './mvnw clean compile'
+            }
+        }
+    }
+}
