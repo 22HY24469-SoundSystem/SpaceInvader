@@ -10,13 +10,9 @@ class SoundPlayTest {
 
     @Test
     void play() {
-        SoundType[] soundTypes = SoundType.values();
-        for(int i = 0; i < soundTypes.length; i++){
-            SoundPlay.getInstance().play(soundTypes[i]);
-
+            SoundPlay.getInstance().play(SoundType.enemyKill);
             assertAll(
-                    () -> assertTrue((!SoundBgm.bgmClip.equals(null) || !SoundEffect.effectClip.equals(null)))
+                    () -> assertNotNull(SoundEffect.effectClip)
             );
-        }
     }
 }
