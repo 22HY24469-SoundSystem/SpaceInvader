@@ -60,7 +60,7 @@ public class SoundPlay{
     private void playBgm(String filename){
         if(sb == null || !sb.bgmClip.isActive()){
             sb = new SoundBgm(filename);
-            sb.bgmVolume(bgmVolume);
+            sb.settingBgmVolume(bgmVolume);
             sb.play();
         }
     }
