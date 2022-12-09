@@ -59,7 +59,7 @@ public class GameScreen extends Screen {
 	/** Current difficulty level number. */
 	private int level;
 	/** Player's ship. */
-	private Ship ship;
+	public Ship ship;
 	/** Bonus enemy ship that appears sometimes. */
 	private EnemyShip enemyShipSpecial;
 
@@ -500,7 +500,7 @@ public class GameScreen extends Screen {
 	 *            Second entity, the ship.
 	 * @return Result of the collision test.
 	 */
-	private boolean checkCollision(final Entity a, final Entity b) {
+	public boolean checkCollision(final Entity a, final Entity b) {
 		// Calculate center point of the entities in both axis.
 		int centerAX = a.getPositionX() + a.getWidth() / 2;
 		int centerAY = a.getPositionY() + a.getHeight() / 2;
