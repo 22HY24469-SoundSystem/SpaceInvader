@@ -7,6 +7,7 @@ import engine.GameState;
 import entity.EXPItem;
 import entity.Entity;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 
 import static org.junit.jupiter.api.Assertions.*;
 

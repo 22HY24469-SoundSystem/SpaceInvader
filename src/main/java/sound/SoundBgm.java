@@ -53,7 +53,7 @@ public class SoundBgm {
 
     public void bgmVolume(int volume){ 
         this.volume = volume;
-        if(bgmClip.isControlSupported(FloatControl.Type.MASTER_GAIN)){
+        if(!bgmClip.equals(null) && bgmClip.isControlSupported(FloatControl.Type.MASTER_GAIN)){
             volumeControl = (FloatControl) bgmClip.getControl(FloatControl.Type.MASTER_GAIN);
             volumeControl.setValue(20f * (float) Math.log10(volume / 100.0)); //백분율
         } 
