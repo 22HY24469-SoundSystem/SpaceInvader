@@ -39,10 +39,12 @@ public class SoundBgm {
         }
     }
     public void play(){
+        if(bgmClip != null){
         try{
             bgmClip.start();
         } catch(Exception e){
             e.printStackTrace();
+        }
         }
     }
 
