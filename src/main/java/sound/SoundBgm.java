@@ -50,7 +50,9 @@ public class SoundBgm {
         }
     }
     public void stop(){ bgmClip.stop(); }
-
+    public void settingBgmVolume(int volume){
+        this.volume = volume;
+    }
     public void bgmVolume(int volume){ 
         this.volume = volume;
         if(!bgmClip.equals(null) && bgmClip.isControlSupported(FloatControl.Type.MASTER_GAIN)){
