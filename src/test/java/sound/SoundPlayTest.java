@@ -15,5 +15,6 @@ class SoundPlayTest {
             assertAll(
                     () -> assertEquals(52, SoundBgm.getVolume())
             );
+            SoundBgm.bgmClip.stop();
     }
 }
