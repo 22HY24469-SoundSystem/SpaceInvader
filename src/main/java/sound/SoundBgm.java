@@ -15,7 +15,7 @@ public class SoundBgm {
     public static Clip bgmClip;
     public File bgmFileLoader;
     private FloatControl volumeControl;
-    private int volume;
+    private static int volume;
     protected Logger logger;
 
     public SoundBgm(String filename){
@@ -64,6 +64,7 @@ public class SoundBgm {
             volumeControl.setValue(20f * (float) Math.log10(volume / 100.0)); //백분율
         } 
     }
+    public static int getVolume(){return volume;}
 
 //    public void random(String fileNames[]){
 //

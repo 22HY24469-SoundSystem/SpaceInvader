@@ -11,8 +11,9 @@ class SoundPlayTest {
     @Test
     void play() {
             SoundPlay.getInstance().play(SoundType.mainGameBgm);
+            SoundPlay.getInstance().setBgmVolume(2);
             assertAll(
-                    () -> assertNotNull(SoundBgm.bgmClip)
+                    () -> assertEquals(52, SoundBgm.getVolume())
             );
     }
 }
