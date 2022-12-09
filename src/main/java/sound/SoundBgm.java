@@ -12,7 +12,7 @@ import engine.Core;
 import engine.FileManager;
 
 public class SoundBgm {
-    public Clip bgmClip;
+    public static Clip bgmClip;
     public File bgmFileLoader;
     private FloatControl volumeControl;
     private int volume;

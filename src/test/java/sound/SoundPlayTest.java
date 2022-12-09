@@ -12,9 +12,10 @@ class SoundPlayTest {
     void play() {
         SoundType[] soundTypes = SoundType.values();
         for(int i = 0; i < soundTypes.length; i++){
-            final int a = i;
+            SoundPlay.getInstance().play(soundTypes[i]);
+
             assertAll(
-                    () -> SoundPlay.getInstance().play(soundTypes[a])
+                    () -> assertTrue((!SoundBgm.bgmClip.equals(null) || !SoundEffect.effectClip.equals(null)))
             );
         }
     }

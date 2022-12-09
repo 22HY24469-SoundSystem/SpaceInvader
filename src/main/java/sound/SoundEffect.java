@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 public class SoundEffect {
     private static int volume;
-    private Clip effectClip;
+    public static Clip effectClip;
     public File effectFileLoader;
     private AudioInputStream effectInputStream;
 
