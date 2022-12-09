@@ -10,9 +10,9 @@ class SoundPlayTest {
 
     @Test
     void play() {
-            SoundPlay.getInstance().play(SoundType.enemyKill);
+            SoundPlay.getInstance().play(SoundType.mainGameBgm);
             assertAll(
-                    () -> assertNotNull(SoundEffect.effectClip)
+                    () -> assertNotNull(SoundBgm.bgmClip)
             );
     }
 }
